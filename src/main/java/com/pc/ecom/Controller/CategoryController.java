@@ -1,0 +1,69 @@
+package com.pc.ecom.Controller;
+
+import com.pc.ecom.Model.Category;
+import com.pc.ecom.Payload.CategoryDTO;
+import com.pc.ecom.Payload.CategoryResponse;
+import com.pc.ecom.Service.CategoryService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/")
+public class CategoryController {
+
+    //Need to inject a service class dependency
+//    @Autowired
+    private CategoryService categoryService;
+
+    //Constructor injection is by default. Otherwise, could use Field injection
+    // through autowire
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+//    @GetMapping("/api/public/categories")
+    @RequestMapping(method = RequestMethod.GET, value = "public/categories")
+    public ResponseEntity<CategoryResponse> getCategories() {
+//        List<CategoryDTO> categories = categoryService.getAllCategories();
+        CategoryResponse categoryResponse = categoryService.getAllCategories();
+        return new ResponseEntity<>(categoryResponse,HttpStatus.OK);
+    }
+
+//    @PostMapping("/api/public/categories")
+    @RequestMapping(method = RequestMethod.POST,value = "public/categories")
+    //@valid constraint/criteria can be defined in the model via annotations
+    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
+        categoryService.createCategory(category); //same here. Use the injected object
+        return new ResponseEntity<>("Category successfully added",HttpStatus.CREATED);
+    }
+
+//    @DeleteMapping("/api/admin/categories/{categoryId}")
+    @RequestMapping(method = RequestMethod.DELETE,value = "admin/categories/{categoryId}")
+    public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
+        try{
+           String status =  categoryService.deleteCategory(categoryId);
+//           return ResponseEntity.status(HttpStatus.OK).body(status);
+//            return new ResponseEntity<>(status, HttpStatus.OK);?
+            return ResponseEntity.ok(status);
+        }
+        catch (ResponseStatusException e){
+            return new ResponseEntity<>(e.getReason(),e.getStatusCode());
+        }
+    }
+
+//    @PutMapping("/api/public/categories/{categoryId}")
+    @RequestMapping(method = RequestMethod.PUT, value = "public/categories/{categoryId}")
+    public ResponseEntity<Object > updateCategory(@RequestBody Category category, @PathVariable Long categoryId) {
+        try {
+            Category updatedCategory = categoryService.updateCategory(category, categoryId);
+           return new ResponseEntity<>(updatedCategory,HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
+        }
+    }
+}
