@@ -49,26 +49,15 @@ public class CategoryController {
 
 //    @DeleteMapping("/api/admin/categories/{categoryId}")
     @RequestMapping(method = RequestMethod.DELETE,value = "admin/categories/{categoryId}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
-        try{
-           String status =  categoryService.deleteCategory(categoryId);
-//           return ResponseEntity.status(HttpStatus.OK).body(status);
-//            return new ResponseEntity<>(status, HttpStatus.OK);?
-            return ResponseEntity.ok(status);
-        }
-        catch (ResponseStatusException e){
-            return new ResponseEntity<>(e.getReason(),e.getStatusCode());
-        }
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long categoryId) {
+        CategoryDTO deletedCategory =  categoryService.deleteCategory(categoryId);
+        return new ResponseEntity<>(deletedCategory, HttpStatus.OK);
     }
 
 //    @PutMapping("/api/public/categories/{categoryId}")
     @RequestMapping(method = RequestMethod.PUT, value = "public/categories/{categoryId}")
-    public ResponseEntity<Object > updateCategory(@RequestBody Category category, @PathVariable Long categoryId) {
-        try {
-            Category updatedCategory = categoryService.updateCategory(category, categoryId);
-           return new ResponseEntity<>(updatedCategory,HttpStatus.OK);
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
-        }
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO category, @PathVariable Long categoryId) {
+        CategoryDTO updatedCategory = categoryService.updateCategory(category, categoryId);
+        return new ResponseEntity<>(updatedCategory,HttpStatus.OK);
     }
 }
