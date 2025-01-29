@@ -6,7 +6,7 @@ import com.pc.ecom.Payload.CategoryResponse;
 
 
 public interface CategoryService  {
-    CategoryResponse getAllCategories();
+    CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize,String sortBy, String sortOder);
     CategoryDTO createCategory(CategoryDTO categoryDto);
     CategoryDTO deleteCategory(Long Id);
     CategoryDTO updateCategory(CategoryDTO category, Long id);
