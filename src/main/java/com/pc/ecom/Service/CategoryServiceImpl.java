@@ -33,12 +33,15 @@ public class CategoryServiceImpl implements CategoryService {
         if(allCategories.isEmpty()){
             throw new APIException("No categories found");
         }
-        List<CategoryDTO> rsp = allCategories.stream()
-                .map( category -> {
-                        modelMapper.map(category, CategoryDTO.class);
-                    }
-        )
-        return allCategories;
+
+        List<CategoryDTO> categoryDTOS = allCategories.stream()
+                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .toList();
+
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setContent(categoryDTOS);
+
+        return categoryResponse;
     }
 
     @Override
