@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class ResourceNotFoundException extends RuntimeException{
-    final String MESSAGE = "Not Found";
+    String message;
     String resource;
     String field;
     Long fieldId;
@@ -15,5 +15,6 @@ public class ResourceNotFoundException extends RuntimeException{
         this.resource = resource;
         this.field = field;
         this.fieldId = fieldId;
+        this.message = String.format("Resource %s, Field %s not found", resource,field);
     }
 }

@@ -1,5 +1,6 @@
 package com.pc.ecom.Exceptions;
 
+import com.pc.ecom.Payload.APIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -26,21 +27,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String,String>> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
-        String resourceName = ex.getResource();
-        String field = ex.getField();
-        Long fieldId = ex.getFieldId();
-        Map<String,String> response = new HashMap<>();
-        response.put("resource", resourceName);
-        response.put("field", field);
-        response.put("fieldId", String.valueOf(fieldId));
-        response.put("message", ex.getMessage());
-        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+    public ResponseEntity<APIResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
+        APIResponse apiResponse = new APIResponse();
+        apiResponse.setMessage(ex.getMessage());
+        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(APIException.class)
-    public ResponseEntity<String> apiExceptionHandler(APIException ex){
-        String message = ex.getMessage();
-        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+    public ResponseEntity<APIResponse> apiExceptionHandler(APIException ex){
+        APIResponse apiResponse = new APIResponse();
+        apiResponse.setMessage(ex.getMessage());
+        return new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
     }
 }

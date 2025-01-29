@@ -85,7 +85,7 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> currentCategoryOptional = categoryRepository.findById(id);
 
         if(currentCategoryOptional.isEmpty()) {
-            throw new APIException(String.format("Category %s found",id));
+            throw new APIException(String.format("Category with ID %s not found",id));
         }
         else{
             Category currentCategory = currentCategoryOptional
