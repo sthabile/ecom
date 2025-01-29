@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/")
 public class CategoryController {
@@ -37,9 +35,16 @@ public class CategoryController {
 //    @PostMapping("/api/public/categories")
     @RequestMapping(method = RequestMethod.POST,value = "public/categories")
     //@valid constraint/criteria can be defined in the model via annotations
-    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
-        categoryService.createCategory(category); //same here. Use the injected object
-        return new ResponseEntity<>("Category successfully added",HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO category) {
+        CategoryDTO savedCategory =  categoryService.createCategory(category); //same here. Use the injected object
+
+//        CategoryResponse categoryResponse = new CategoryResponse();
+//        categoryResponse.addToContent(savedCategory);
+//        categoryResponse.setStatus(String.format("Successfully created category %s",savedCategory.getCategoryName()));
+//
+//        return new ResponseEntity<>(categoryResponse,HttpStatus.CREATED);\
+        //I suppose we could also just return the DTO instead of the CategoryResponse
+        return new ResponseEntity<>(savedCategory,HttpStatus.CREATED);
     }
 
 //    @DeleteMapping("/api/admin/categories/{categoryId}")

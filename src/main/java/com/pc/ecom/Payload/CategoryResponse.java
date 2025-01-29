@@ -12,4 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 public class CategoryResponse {
     private List<CategoryDTO> content;
+
+    //I mean... we could... but let's comment this out for now ;)
+//    private String status;
+//
+//    public void addToContent(CategoryDTO categoryDTO) {
+//        if (this.content == null) {
+//            this.content = new ArrayList<>();
+//        }
+//        content.add(categoryDTO);
+//    }
 }
