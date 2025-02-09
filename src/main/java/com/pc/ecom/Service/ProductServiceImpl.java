@@ -73,9 +73,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        ProductResponse productResponse = new ProductResponse();
-
-
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -94,22 +91,24 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .map(product -> modelMapper.map(product,ProductDTO.class))
                 .toList();
-        productResponse.setContent(productDTOS);
-        productResponse.setPageNumber(productsPage.getNumber());
-        productResponse.setPageSize(productsPage.getSize());
-        productResponse.setTotalPages(productsPage.getTotalPages());
-        productResponse.setLastPage(productsPage.isLast());
-
-        return productResponse;
+        return getProductPageResponse(productsPage, productDTOS);
     }
 
     @Override
-    public ProductResponse getProductsByCategory(Long categoryId) {
+    public ProductResponse getProductsByCategory(Long categoryId,Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category",categoryId,"CategoryId"));
 
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
 
-        List<Product> products = productRepository.findProductByCategory(category);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+
+        Page<Product> productsPage = productRepository.findProductByCategory(category,pageable);
+
+        List<Product> products = productsPage.getContent();
 
         if(products.isEmpty()){
             throw new APIException("No Products Found for Category "+categoryId);
@@ -118,19 +117,20 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> productDTOS = products.stream().map(product -> modelMapper.map(product,ProductDTO.class))
                 .toList();
 
-        ProductResponse productResponse = new ProductResponse();
-        productResponse.setContent(productDTOS);
-
-        return productResponse;
+        return getProductPageResponse(productsPage, productDTOS);
 
     }
 
     //TODO: Fix issue with LikeIgnoreCase query. Getting an empty result
     //  but getting correct result when running querying directly against the db
     @Override
-    public ProductResponse searchProductByKeyword(String keyword) {
-        List<Product> products = productRepository.findProductByProductNameLikeIgnoreCase('\''+keyword+'\'');
+    public ProductResponse searchProductByKeyword(String keyword,Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
 
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Product> productsPage = productRepository.findProductByProductNameLikeIgnoreCase('\''+keyword+'\'',pageRequest);
+        List<Product> products = productsPage.getContent();
         if(products.isEmpty()){
             throw new APIException("No Products Found with keyword "+keyword);
         }
@@ -139,9 +139,7 @@ public class ProductServiceImpl implements ProductService {
             .peek(productDTO -> System.out.println(productDTO.getProductName()))
             .toList();
 
-        ProductResponse productResponse = new ProductResponse();
-        productResponse.setContent(productDTOS);
-        return productResponse;
+        return getProductPageResponse(productsPage, productDTOS);
     }
 
     @Override
@@ -188,4 +186,21 @@ public class ProductServiceImpl implements ProductService {
 
         return modelMapper.map(savedProduct,ProductDTO.class);
     }
+
+    private ProductResponse getProductPageResponse(Page<Product> productsPage, List<ProductDTO> productDTOS) {
+        ProductResponse productResponse = new ProductResponse();
+        return getProductPageResponse(productResponse, productsPage, productDTOS);
+    }
+
+    private ProductResponse getProductPageResponse(ProductResponse productResponse, Page<Product> productsPage, List<ProductDTO> productDTOS) {
+        productResponse.setContent(productDTOS);
+        productResponse.setPageNumber(productsPage.getNumber());
+        productResponse.setPageSize(productsPage.getSize());
+        productResponse.setTotalPages(productsPage.getTotalPages());
+        productResponse.setLastPage(productsPage.isLast());
+        productResponse.setTotalElements(productsPage.getTotalElements());
+
+        return productResponse;
+    }
+
 }
