@@ -6,4 +6,10 @@ public class AppConstants {
     public static final String SORT_CATEGORIES_BY = "categoryId";
     public static final String SORT_ORDER= "asc";
     public static final String SORT_PRODUCTS_BY = "productId";
+
+    public enum AppRole{
+        USER,
+        ADMIN,
+        SELLER
+    }
 }

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Table(name = "products")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
@@ -41,4 +42,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User user;
 }
