@@ -3,6 +3,8 @@ package com.pc.ecom.Exceptions;
 import com.pc.ecom.Payload.APIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,5 +40,13 @@ public class GlobalExceptionHandler {
         APIResponse apiResponse = new APIResponse();
         apiResponse.setMessage(ex.getMessage());
         return new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> authenticationExceptionHandler(AuthenticationException ex){
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", "Bad credentials");
+        map.put("status", false);
+        return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
     }
 }
