@@ -43,6 +43,9 @@ public class User {
             orphanRemoval = true) //clear out orphaned products
     private Set<Product> productSet;
 
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Cart cart;
+
     @NotBlank
     @Size(max = 20)
     @Column(name = "username")
