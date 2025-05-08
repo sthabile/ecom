@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.util.List;
 
 @Data
 @Entity
@@ -18,11 +15,11 @@ import java.util.List;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int addressId;
+    private Long addressId;
 
-    @ToString.Exclude
-    @ManyToMany(mappedBy = "addresses")
-    private List<User> users;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotBlank
     @Size(min = 5, message = "Street name must be at lest 5 characters")
@@ -44,8 +41,7 @@ public class Address {
     @Size(min = 4, message = "Zipcode must be at least 4 characters")
     private String zipcode;
 
-    public Address(List<User> users, String street, String buildingName, String city, String country, String zipcode) {
-        this.users = users;
+    public Address(String street, String buildingName, String city, String country, String zipcode) {
         this.street = street;
         this.buildingName = buildingName;
         this.city = city;
