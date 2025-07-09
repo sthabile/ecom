@@ -37,8 +37,11 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private FileService fileService;
 
-    @Value("project.images-dir")
+    @Value("${images.dir}")
     private String imagesDirectory;
+
+    @Value("${images.base.url}")
+    private String imagesBaseUrl;
 
     @Override
     public ProductDTO saveProduct(ProductDTO productDTO, Long categoryId) {
@@ -89,7 +92,12 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductDTO> productDTOS = products
                 .stream()
-                .map(product -> modelMapper.map(product,ProductDTO.class))
+                .map(product -> {
+                           ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+                           productDTO.setImage(constructImageUrl(product.getImage()));
+                           return productDTO;
+                        }
+                )
                 .toList();
         return getProductPageResponse(productsPage, productDTOS);
     }
@@ -201,6 +209,10 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setTotalElements(productsPage.getTotalElements());
 
         return productResponse;
+    }
+
+    private String constructImageUrl(String imageName) {
+        return imagesBaseUrl.endsWith("/") ? imagesBaseUrl + imageName : imagesBaseUrl + "/" + imageName;
     }
 
 }

@@ -83,7 +83,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/api/public/").permitAll()
+                                .requestMatchers("/api/public/**").permitAll()
                                 .requestMatchers("/images/**").permitAll()
                                 .requestMatchers("api/admin/**").permitAll() //should not permit in PROD. Must always authenticate for this endpoint
                                 .anyRequest().authenticated()
